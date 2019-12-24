@@ -1,35 +1,24 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
+	"simple-forum/controller"
 )
 
+var port = "3000"
+
 func main()  {
-	r := gin.New()
+	r := controller.InitRouter()
 
 	// Middleware
-	r.Use(gin.Logger())
-	r.Use(CORSMiddleware())
+	r.InitMiddleware()
+
+	// Routes
+	r.Routes()
 
 	// Port
-	if err := r.Run(":3001"); err != nil {
+	err := r.RunServer(port)
+	if err != nil {
 		log.Fatal(err)
-	}
-}
-
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
 	}
 }
