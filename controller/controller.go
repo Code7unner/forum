@@ -4,36 +4,39 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"simple-forum/controller/routes"
 )
 
 type Controller struct {
-	*gin.Engine
-	db *sql.DB
+	DB *sql.DB
 }
 
 func InitController(db *sql.DB) *Controller {
-	return &Controller{gin.New(), db}
+	return &Controller{db}
 }
 
-func (c *Controller) InitMiddleware() {
-	c.Use(gin.Logger())
-	c.Use(c.CORSMiddleware())
+func InitMiddleware(r *gin.Engine) {
+	r.Use(gin.Logger())
+	r.Use(CORSMiddleware())
 }
 
-func (c *Controller) RunServer(address string) error {
+func RunServer(address string, c *Controller) error {
 	if address == "" {
 		return errors.New("Error port address, please change your PORT in .env file")
 	}
 
-	if err := c.Run(":" + address); err != nil {
+	r := gin.New()
+
+	InitMiddleware(r)
+	Routes(c, r)
+
+	if err := r.Run(":" + address); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (c *Controller) CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		context.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -49,6 +52,6 @@ func (c *Controller) CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-func (c *Controller) Routes() {
-	c.GET("/api/forum/categories", routes.GetCategories)
+func Routes(c *Controller, r *gin.Engine)  {
+	r.GET("/api/forum/categories", gin.WrapF(c.GetCategories))
 }

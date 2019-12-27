@@ -9,17 +9,13 @@ import (
 	"os"
 )
 
-type Postgres struct {
-	DB *sql.DB
-}
-
 type Config struct {
 	dbUser string
 	dbPass string
 	dbName string
 }
 
-func InitDatabase() (*Postgres, error) {
+func InitDatabase() (*sql.DB, error) {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -43,5 +39,5 @@ func InitDatabase() (*Postgres, error) {
 		return nil, err
 	}
 
-	return &Postgres{db}, nil
+	return db, nil
 }

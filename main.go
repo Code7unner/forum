@@ -14,16 +14,9 @@ func main()  {
 		log.Fatal(err)
 	}
 
-	r := controller.InitController(db.DB)
+	r := controller.InitController(db)
 
-	// Middleware
-	r.InitMiddleware()
-
-	// Routes
-	r.Routes()
-
-	// Port
-	err = r.RunServer(port)
+	err = controller.RunServer(port, r)
 	if err != nil {
 		log.Fatal(err)
 	}
