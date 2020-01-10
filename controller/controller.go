@@ -53,5 +53,12 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func Routes(c *Controller, r *gin.Engine)  {
-	r.GET("/api/forum/categories", gin.WrapF(c.GetCategories))
+	r.GET("/api/forum", gin.WrapF(c.GetCategory))
+	r.GET("/api/forum/messages", gin.WrapF(c.GetMessages))
+	r.GET("/api/forum/subcategories", gin.WrapF(c.GetSubcategories))
+	r.GET("/api/categories", gin.WrapF(c.GetCategories))
+	r.GET("/api/messages", gin.WrapF(c.GetMessages))
+
+	r.POST("/api/messages", gin.WrapF(c.AddMessage))
+	r.POST("/api/forum/messages", gin.WrapF(c.AddMessage))
 }
